@@ -61,3 +61,50 @@ app.get("/tickets/:ticket_id", async (req, res) => {
 app.listen(5000, () => {
     console.log("Server running on port 5000");
 });
+//Post a new ticket
+
+app.post("/tickets", async (req, res) => {
+
+    const ticket = req.body;
+
+    const { data, error } = await supabase
+        .from("tickets")
+        .insert(ticket)
+        .select();
+
+
+    if (error) {
+        return res.status(500).json({
+            error: error.message
+        });
+    }
+
+
+    res.status(201).json(data);
+
+});
+
+// Update a ticket by ticket_id
+app.patch("/tickets/:ticket_id", async (req, res) => {
+
+    const { ticket_id } = req.params;
+
+    const updates = req.body;
+
+    const { data, error } = await supabase
+        .from("tickets")
+        .update(updates)
+        .eq("ticket_id", ticket_id)
+        .select();
+
+
+    if (error) {
+        return res.status(500).json({
+            error: error.message
+        });
+    }
+
+
+    res.json(data);
+
+});
